@@ -1,13 +1,15 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import NorrisDisplayer from "../presentational/NorrisDisplayer.jsx";
+
 class NorrisContainer extends Component {
         constructor() {
         super();
+
         this.state = {
             joke: "",
             jokes: [],
-            timeBetweenJokes: 3000
+            timeBetweenJokes: 2000
         };
 
         this.getJoke = this.getJoke.bind(this);
@@ -24,8 +26,19 @@ class NorrisContainer extends Component {
     getJokeFromUrl() {
         if (URLSearchParams) {
             var params = new URLSearchParams(window.location.search).getAll('joke');
-            if (params.length)
-                return params[0];
+            return params.length ? params[0] : null
+        }
+
+        var url = decodeURI(window.location.search);
+        var jokeParamName = 'joke=';
+        var urlParamJokeIndex = url.indexOf(jokeParamName);
+
+        if (urlParamJokeIndex > 0) {
+            var urlParamJoke = url.substring(urlParamJokeIndex + jokeParamName.length);
+            var urlParamJokeEndIndex = urlParamJoke.indexOf('?');
+            urlParamJokeEndIndex = urlParamJokeEndIndex > 0 ? urlParamJokeEndIndex : urlParamJoke.length;
+            urlParamJoke = urlParamJoke.substring(0, urlParamJokeEndIndex);
+            return urlParamJoke;
         }
 
         return null;
@@ -55,12 +68,12 @@ class NorrisContainer extends Component {
 
     render() {
         return (
-            <form id="article-form">
-            <NorrisDisplayer
-                joke={this.state.joke}
-                getJoke={this.getJoke}
-            />
-            </form>
+            <div className="norris-container">
+                <NorrisDisplayer
+                    joke={this.state.joke}
+                    getJoke={this.getJoke}
+                />
+            </div>
         );
     }
 }
